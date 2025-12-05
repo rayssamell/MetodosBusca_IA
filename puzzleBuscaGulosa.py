@@ -181,16 +181,23 @@ def visualizar_pygame(path_states):
 # Método Main
 if __name__ == "__main__":
     
-    # Caso Difícil
-    #initial_state = [8, 6, 7, 2, 5, 4, 3, 0, 1] 
-    
-    # Caso Médio
-    initial_state = [1, 8, 2,
-                    0, 4, 3,  
-                    7, 6, 5]
+    print("Digite os 9 números (0-8) separados por espaço:")
+    input_str = input()
+
+    try:
+        initial_state = [int(n) for n in input_str.split()]
+        
+        if len(initial_state) != 9:
+            raise ValueError("O puzzle deve ter 9 elementos.")
+
+    except ValueError as e:
+        initial_state = initial_state = [1, 8, 2,
+                                         0, 4, 3,  
+                                         7, 6, 5]
 
     # Heuristicas 
-    heuristica = 2
+    print( "Heurística --> Digite 1 para Misplaced, 2 para Manhattan ou 3 para Euleriana:")
+    heuristica = int(input())
 
     print(f"Resolvendo puzzle: {initial_state}")
     print("Calculando...")

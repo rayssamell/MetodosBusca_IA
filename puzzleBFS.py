@@ -136,10 +136,20 @@ def visualizar_pygame(path_states):
 
 # Método Main
 if __name__ == "__main__":
-    
-    initial_state = [1, 8, 2,
-                    0, 4, 3,  
-                    7, 6, 5]
+
+    print("Digite os 9 números (0-8) separados por espaço:")
+    input_str = input()
+
+    try:
+        initial_state = [int(n) for n in input_str.split()]
+        
+        if len(initial_state) != 9:
+            raise ValueError("O puzzle deve ter 9 elementos.")
+
+    except ValueError as e:
+        initial_state = initial_state = [1, 8, 2,
+                                         0, 4, 3,  
+                                         7, 6, 5]
 
     print(f"Resolvendo puzzle com BFS:")
     print("Calculando...")
