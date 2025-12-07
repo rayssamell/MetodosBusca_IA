@@ -87,7 +87,7 @@ def visualizar_pygame(path_states):
     pygame.init()
     LARGURA, ALTURA = 400, 400
     screen = pygame.display.set_mode((LARGURA, ALTURA))
-    pygame.display.set_caption("Visualização A* - Final")
+    pygame.display.set_caption("Visualização BFS - Final")
     
     # Cores e Fonte
     BRANCO = (240, 240, 240)
@@ -147,11 +147,12 @@ if __name__ == "__main__":
             raise ValueError("O puzzle deve ter 9 elementos.")
 
     except ValueError as e:
-        initial_state = initial_state = [1, 8, 2,
-                                         0, 4, 3,  
-                                         7, 6, 5]
-
-    print(f"Resolvendo puzzle com BFS:")
+        initial_state = [0, 2, 3,
+                         1, 4, 8,  
+                         7, 6, 5]
+        
+        
+    print(f"Resolvendo puzzle com BFS: {initial_state}")
     print("Calculando...")
     
     start_time = time.time()
@@ -160,12 +161,31 @@ if __name__ == "__main__":
     
     if solution:
         tempo = end_time - start_time
-        print(f"Sucesso! Tempo: {tempo:.4f}s")
+        
+        # --- Lógica Adicionada Aqui ---
+        moves_list = []
+        temp_node = solution
+        # Percorre de trás pra frente (filho -> pai)
+        while temp_node.parent is not None:
+            moves_list.append(temp_node.move)
+            temp_node = temp_node.parent
+        moves_list.reverse() # Inverte para ordem correta
+        
+        print("\n" + "="*40)
+        print(f"ESTATÍSTICAS DA SOLUÇÃO (BFS)")
+        print("="*40)
+        print(f"Tempo: {tempo:.4f} segundos.")
         print(f"Nós explorados: {nodes}")
-        print(f"Passos da solução: {solution.depth}")
+        print(f"Profundidade: {solution.depth}")
+        print("-" * 40)
+        print(f"CAMINHO FEITO (Movimentos):")
+        print(f"{moves_list}")
+        print("="*40 + "\n")
+        # -----------------------------
+        
         print("Abrindo visualização...")
         
         caminho = recuperar_caminho(solution)
         visualizar_pygame(caminho)
     else:
-        print("Falha.")
+        print("Falha. Sem solução encontrada.")

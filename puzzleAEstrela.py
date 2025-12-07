@@ -2,6 +2,7 @@ import heapq
 import pygame
 import sys
 import time
+import math
 
 class PuzzleState:
     def __init__(self, board, parent, move, depth, cost):
@@ -33,7 +34,6 @@ def get_heuristic(board, choice):
     # 1. Misplaced Tiles
     if choice == 1:
         for i in range(9):
-
             if board[i] != 0 and board[i] != goal_state[i]:
                 dist += 1
         return dist
@@ -43,9 +43,7 @@ def get_heuristic(board, choice):
         for i in range(9):
             val = board[i]
             if val != 0:
-              
                 current_row, current_col = divmod(i, 3)
-                
                 target_row, target_col = divmod(val - 1, 3)
                 dist += abs(current_row - target_row) + abs(current_col - target_col)
         return dist
@@ -57,7 +55,6 @@ def get_heuristic(board, choice):
             if val != 0:
                 current_row, current_col = divmod(i, 3)
                 target_row, target_col = divmod(val - 1, 3)
-               
                 dist += math.sqrt((current_row - target_row)**2 + (current_col - target_col)**2)
         return dist
     
@@ -194,13 +191,16 @@ if __name__ == "__main__":
             raise ValueError("O puzzle deve ter 9 elementos.")
 
     except ValueError as e:
-        initial_state = initial_state = [1, 8, 2,
-                                         0, 4, 3,  
-                                         7, 6, 5]
+        initial_state = [0, 2, 3,
+                         1, 4, 8,  
+                         7, 6, 5]
 
-    # Heuristicas 
+    # Heurísticas 
     print( "Heurística --> Digite 1 para Misplaced, 2 para Manhattan ou 3 para Euleriana:")
-    heuristica = int(input())
+    try:
+        heuristica = int(input())
+    except ValueError:
+        heuristica = 2 # Padrão para Manhattan
 
     print(f"Resolvendo puzzle: {initial_state}")
     print("Calculando...")
@@ -211,10 +211,29 @@ if __name__ == "__main__":
     
     if solution:
         tempo = end_time - start_time
-        print(f"Resolvido em {tempo:.4f} segundos.")
-        print(f"Nós explorados: {nodes}")
-        print(f"Passos da solução: {solution.depth}")
         
+        # --- ALTERAÇÃO AQUI: Recuperando e printando o caminho ---
+        moves_list = []
+        temp_node = solution
+        # Percorre de trás pra frente (filho -> pai) pegando o movimento
+        while temp_node.parent is not None:
+            moves_list.append(temp_node.move)
+            temp_node = temp_node.parent
+        moves_list.reverse() # Inverte para ficar na ordem correta
+        
+        print("\n" + "="*40)
+        print(f"ESTATÍSTICAS DA SOLUÇÃO")
+        print("="*40)
+        print(f"Tempo: {tempo:.4f} segundos.")
+        print(f"Nós explorados: {nodes}")
+        # A profundidade já estava disponível em solution.depth
+        print(f"Profundidade (Custo): {solution.depth}")
+        print("-" * 40)
+        print(f"CAMINHO FEITO (Movimentos):")
+        print(f"{moves_list}")
+        print("="*40 + "\n")
+        # ---------------------------------------------------------
+
         caminho_visual = recuperar_caminho(solution)
         visualizar_pygame(caminho_visual)
     else:
